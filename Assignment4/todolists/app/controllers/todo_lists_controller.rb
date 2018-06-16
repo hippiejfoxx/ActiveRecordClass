@@ -4,7 +4,8 @@ class TodoListsController < ApplicationController
   # GET /todo_lists
   # GET /todo_lists.json
   def index
-    @todo_lists = TodoList.all
+    user = User.find_by(id: session[:id])
+    @todo_lists = user.todo_lists
   end
 
   # GET /todo_lists/1
