@@ -1,26 +1,27 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
-#   Mayor.create(name: 'Emanuel', city: cities.first)
+today = Date.today
+two_days_ago = Date.today - 2.days
+three_days_ago = Date.today - 3.days
+dates = [today, two_days_ago, three_days_ago]
+
 User.destroy_all
 TodoList.destroy_all
-TodoItem.destroy_all
-Profile.destroy_all
 
-user_list = [
-    ["Carly", "Fiorina", "female", 1954],
-    ["Donald", "Trump", "male", 1946],
-    ["Ben", "Carson", "male", 1951],
-    ["Hillary", "Clinton", "female", 1947]
+100.times { |index| TodoList.create! list_name: "List #{index}", list_due_date: dates.sample }
+
+TodoList.all.each do |list|
+  list.todo_items.create! [
+    { title: "Task 1", due_date: dates.sample, description: "very important task TEST", completed: false },
+    { title: "Task 2", due_date: dates.sample, description: "do something else TEST", completed: true},
+    { title: "Task 3", due_date: dates.sample, description: "learn Action Pack TEST", completed: true}
+  ]
+end
+
+users = User.create! [
+  { username: "jim", password: "abc123" },
+  { username: "rich", password: "123abc" }
 ]
 
-# .create({first_name: x[0], last_name: x[1], gender:x[2], birth_year:x[3]})
-user_list.each do |x|
-  user = User.create({username: x[1]})
-  user.profile = Profile.create({first_name: x[0], last_name: x[1], gender:x[2], birth_year:x[3]})
-  list = user.todo_lists.create({list_due_date: Date.today + 1.years})
-  5.times{|x| list.todo_items.create({due_date: Date.today + 1.years, title: "test", description: "tess"})}
+TodoList.all.each do |list|
+  list.user = users.sample
+  list.save!
 end
